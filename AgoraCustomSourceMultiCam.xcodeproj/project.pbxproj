@@ -6,34 +6,62 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXFileReference section */
-		B8FF71DE2E66EB30005F472C /* AgoraCustomSourceMultiCam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AgoraCustomSourceMultiCam.app; sourceTree = BUILT_PRODUCTS_DIR; };
-/* End PBXFileReference section */
+/* Begin PBXBuildFile section */
+		991980AD34F3325539F15FB6 /* Pods_AgoraCustomSourceMultiCam.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B59E64E9D538DE1D493E6798 /* Pods_AgoraCustomSourceMultiCam.framework */; };
+		B8FF71F52E66EB8B005F472C /* AgoraCustomSourceMultiCamApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FF71F02E66EB8B005F472C /* AgoraCustomSourceMultiCamApp.swift */; };
+		B8FF71F62E66EB8B005F472C /* AgoraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FF71F12E66EB8B005F472C /* AgoraViewModel.swift */; };
+		B8FF71F72E66EB8B005F472C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FF71F32E66EB8B005F472C /* ContentView.swift */; };
+		B8FF71F82E66EB8B005F472C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B8FF71F22E66EB8B005F472C /* Assets.xcassets */; };
+/* End PBXBuildFile section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		B8FF71E02E66EB30005F472C /* AgoraCustomSourceMultiCam */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = AgoraCustomSourceMultiCam;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
+/* Begin PBXFileReference section */
+		2B3A014DA940C62FDF70F58F /* Pods-AgoraCustomSourceMultiCam.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AgoraCustomSourceMultiCam.debug.xcconfig"; path = "Target Support Files/Pods-AgoraCustomSourceMultiCam/Pods-AgoraCustomSourceMultiCam.debug.xcconfig"; sourceTree = "<group>"; };
+		8D54F2A59CAC0EC06A77FAEA /* Pods-AgoraCustomSourceMultiCam.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AgoraCustomSourceMultiCam.release.xcconfig"; path = "Target Support Files/Pods-AgoraCustomSourceMultiCam/Pods-AgoraCustomSourceMultiCam.release.xcconfig"; sourceTree = "<group>"; };
+		B59E64E9D538DE1D493E6798 /* Pods_AgoraCustomSourceMultiCam.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AgoraCustomSourceMultiCam.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B8FF71DE2E66EB30005F472C /* AgoraCustomSourceMultiCam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AgoraCustomSourceMultiCam.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B8FF71F02E66EB8B005F472C /* AgoraCustomSourceMultiCamApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraCustomSourceMultiCamApp.swift; sourceTree = "<group>"; };
+		B8FF71F12E66EB8B005F472C /* AgoraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraViewModel.swift; sourceTree = "<group>"; };
+		B8FF71F22E66EB8B005F472C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B8FF71F32E66EB8B005F472C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		B8FF71DB2E66EB30005F472C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				991980AD34F3325539F15FB6 /* Pods_AgoraCustomSourceMultiCam.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		091A7C9F0A8771322BA1E89B /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				2B3A014DA940C62FDF70F58F /* Pods-AgoraCustomSourceMultiCam.debug.xcconfig */,
+				8D54F2A59CAC0EC06A77FAEA /* Pods-AgoraCustomSourceMultiCam.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		A1ED9A457C2AAE7D862E885B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B59E64E9D538DE1D493E6798 /* Pods_AgoraCustomSourceMultiCam.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		B8FF71D52E66EB30005F472C = {
 			isa = PBXGroup;
 			children = (
-				B8FF71E02E66EB30005F472C /* AgoraCustomSourceMultiCam */,
+				B8FF71F42E66EB8B005F472C /* AgoraCustomSourceMultiCam */,
 				B8FF71DF2E66EB30005F472C /* Products */,
+				091A7C9F0A8771322BA1E89B /* Pods */,
+				A1ED9A457C2AAE7D862E885B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -45,6 +73,17 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		B8FF71F42E66EB8B005F472C /* AgoraCustomSourceMultiCam */ = {
+			isa = PBXGroup;
+			children = (
+				B8FF71F02E66EB8B005F472C /* AgoraCustomSourceMultiCamApp.swift */,
+				B8FF71F32E66EB8B005F472C /* ContentView.swift */,
+				B8FF71F12E66EB8B005F472C /* AgoraViewModel.swift */,
+				B8FF71F22E66EB8B005F472C /* Assets.xcassets */,
+			);
+			path = AgoraCustomSourceMultiCam;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -52,20 +91,17 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B8FF71E92E66EB31005F472C /* Build configuration list for PBXNativeTarget "AgoraCustomSourceMultiCam" */;
 			buildPhases = (
+				37CB3A4790E66E33C38779B0 /* [CP] Check Pods Manifest.lock */,
 				B8FF71DA2E66EB30005F472C /* Sources */,
 				B8FF71DB2E66EB30005F472C /* Frameworks */,
 				B8FF71DC2E66EB30005F472C /* Resources */,
+				E387C306645F60F99A481CCD /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				B8FF71E02E66EB30005F472C /* AgoraCustomSourceMultiCam */,
-			);
 			name = AgoraCustomSourceMultiCam;
-			packageProductDependencies = (
-			);
 			productName = AgoraCustomSourceMultiCam;
 			productReference = B8FF71DE2E66EB30005F472C /* AgoraCustomSourceMultiCam.app */;
 			productType = "com.apple.product-type.application";
@@ -109,16 +145,62 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B8FF71F82E66EB8B005F472C /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		37CB3A4790E66E33C38779B0 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-AgoraCustomSourceMultiCam-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E387C306645F60F99A481CCD /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AgoraCustomSourceMultiCam/Pods-AgoraCustomSourceMultiCam-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AgoraCustomSourceMultiCam/Pods-AgoraCustomSourceMultiCam-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AgoraCustomSourceMultiCam/Pods-AgoraCustomSourceMultiCam-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B8FF71DA2E66EB30005F472C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B8FF71F52E66EB8B005F472C /* AgoraCustomSourceMultiCamApp.swift in Sources */,
+				B8FF71F62E66EB8B005F472C /* AgoraViewModel.swift in Sources */,
+				B8FF71F72E66EB8B005F472C /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -248,6 +330,7 @@
 		};
 		B8FF71EA2E66EB31005F472C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2B3A014DA940C62FDF70F58F /* Pods-AgoraCustomSourceMultiCam.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -276,6 +359,7 @@
 		};
 		B8FF71EB2E66EB31005F472C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8D54F2A59CAC0EC06A77FAEA /* Pods-AgoraCustomSourceMultiCam.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
