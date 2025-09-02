@@ -44,8 +44,8 @@ This project demonstrates how to use the **Agora RTC SDK for iOS** with a **cust
 4. Add your Agora App ID and Token in AppID.swift:
 
    ```swift
-let agoraAppId: String = "<#Your App ID#>"
-let agoraToken: String? = "<#Your Token#>"
+    let agoraAppId: String = "<#Your App ID#>"
+    let agoraToken: String? = "<#Your Token#>"
    ```
    
 ## Usage

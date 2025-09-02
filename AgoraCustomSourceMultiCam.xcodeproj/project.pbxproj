@@ -12,6 +12,7 @@
 		B8FF71F62E66EB8B005F472C /* AgoraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FF71F12E66EB8B005F472C /* AgoraViewModel.swift */; };
 		B8FF71F72E66EB8B005F472C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FF71F32E66EB8B005F472C /* ContentView.swift */; };
 		B8FF71F82E66EB8B005F472C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B8FF71F22E66EB8B005F472C /* Assets.xcassets */; };
+		B8FF71FA2E66F433005F472C /* AgoraCameraSourcePushDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FF71F92E66F433005F472C /* AgoraCameraSourcePushDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +24,7 @@
 		B8FF71F12E66EB8B005F472C /* AgoraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraViewModel.swift; sourceTree = "<group>"; };
 		B8FF71F22E66EB8B005F472C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B8FF71F32E66EB8B005F472C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B8FF71F92E66F433005F472C /* AgoraCameraSourcePushDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraCameraSourcePushDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,7 +45,6 @@
 				2B3A014DA940C62FDF70F58F /* Pods-AgoraCustomSourceMultiCam.debug.xcconfig */,
 				8D54F2A59CAC0EC06A77FAEA /* Pods-AgoraCustomSourceMultiCam.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -79,6 +80,7 @@
 				B8FF71F02E66EB8B005F472C /* AgoraCustomSourceMultiCamApp.swift */,
 				B8FF71F32E66EB8B005F472C /* ContentView.swift */,
 				B8FF71F12E66EB8B005F472C /* AgoraViewModel.swift */,
+				B8FF71F92E66F433005F472C /* AgoraCameraSourcePushDelegate.swift */,
 				B8FF71F22E66EB8B005F472C /* Assets.xcassets */,
 			);
 			path = AgoraCustomSourceMultiCam;
@@ -182,9 +184,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-AgoraCustomSourceMultiCam/Pods-AgoraCustomSourceMultiCam-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-AgoraCustomSourceMultiCam/Pods-AgoraCustomSourceMultiCam-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -199,6 +205,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B8FF71F52E66EB8B005F472C /* AgoraCustomSourceMultiCamApp.swift in Sources */,
+				B8FF71FA2E66F433005F472C /* AgoraCameraSourcePushDelegate.swift in Sources */,
 				B8FF71F62E66EB8B005F472C /* AgoraViewModel.swift in Sources */,
 				B8FF71F72E66EB8B005F472C /* ContentView.swift in Sources */,
 			);
