@@ -16,12 +16,16 @@ class AgoraViewModel: NSObject, ObservableObject {
     var agoraAppID = ""
     var agoraChannel = "channel_bac"
     
-    var internalCameraUid: UInt = UInt.random(in: 1...99999)
+    var builtInCameraUid: UInt = UInt.random(in: 1...99999)
     var externalCameraUid: UInt = UInt.random(in: 100000...9999999)
     
+    var builtInCameraTrackId: UInt32 = 0
+    var externalCameraTrackId: UInt32 = 0
+
     var builtInCameraSource: AgoraCameraSourcePush?
     var externalCameraSource: AgoraCameraSourcePush?
-
+    
+    
     override init(){
         super.init()
         
@@ -37,55 +41,39 @@ class AgoraViewModel: NSObject, ObservableObject {
     }
     
     
-//    func agoraSetupCanvas(view: UIView, uid: UInt, deviceID: String?) {
-//        if deviceID != nil {
-//            // Enable external camera capture
-//            let cameraCaptureConfig = AgoraCameraCapturerConfiguration()
-//            cameraCaptureConfig.deviceId = deviceID
-//            agoraKit.enableMultiCamera(true, config: cameraCaptureConfig)
-//            agoraKit.startCameraCapture(.cameraSecondary, config: cameraCaptureConfig)
-//        }
-//        
-//        // set up canvas to render video streams
-//        let videoCanvas = AgoraRtcVideoCanvas()
-//        videoCanvas.uid = uid
-//        videoCanvas.view = view
-//        videoCanvas.renderMode = .hidden
-//        
-//        if uid == internalCameraUid || uid == externalCameraUid {
-//            // Setup local view
-//            videoCanvas.sourceType = uid == internalCameraUid ? .camera : .cameraSecondary
-//            agoraKit.setupLocalVideo(videoCanvas)
-//            agoraKit.startPreview()
-//        }else {
-//            // Setup remote view
-//            agoraKit.setupRemoteVideo(videoCanvas)
-//        }
-//    }
+    func setupBuiltInCamera() {
+        var customSourceDelegator: CustomVideoSourceMultiChannelDelegator = CustomVideoSourceMultiChannelDelegator()
+        customSourceDelegator.cameraType = .front
+        
+         // Create video source for built-in camera
+        builtInCameraSource = AgoraCameraSourcePush(delegate: customSourceDelegator)
+        builtInCameraSource?.startCapture(ofCamera: .front)
+        builtInCameraTrackId = agoraKit.createCustomVideoTrack() // get track id
+     }
     
-    // Use
+    func setupExternalCamera() {
+        var customSourceDelegator: CustomVideoSourceMultiChannelDelegator = CustomVideoSourceMultiChannelDelegator()
+        customSourceDelegator.cameraType = .external
+        
+         // Create video source for external camera
+        externalCameraSource = AgoraCameraSourcePush(delegate: customSourceDelegator)
+        externalCameraSource?.startCapture(ofCamera: .external)
+        externalCameraTrackId = agoraKit.createCustomVideoTrack() // get track id
+     }
+     
     func joinChannelInternalCamera() {
         
-        let mediaOptions = AgoraRtcChannelMediaOptions()
-        mediaOptions.publishCameraTrack = true
-        mediaOptions.publishMicrophoneTrack = true
-        mediaOptions.autoSubscribeVideo = false
-        mediaOptions.autoSubscribeAudio = false
-        mediaOptions.clientRoleType = .broadcaster
-        
-        agoraKit.joinChannel(byToken: nil, channelId: agoraChannel, uid: internalCameraUid, mediaOptions: mediaOptions)
-    }
-    
-    func joinChannelExternalCamera() {
+        // Create connection
         let connection = AgoraRtcConnection()
         connection.channelId = agoraChannel
-        connection.localUid = externalCameraUid
+        connection.localUid = builtInCameraUid
 
+        // Setup media option to send custom video track and microphone track
         let mediaOptions = AgoraRtcChannelMediaOptions()
-        // publish audio and camera track for channel 1
         mediaOptions.publishCameraTrack = false
-        mediaOptions.publishMicrophoneTrack = false
-        mediaOptions.publishSecondaryCameraTrack = true
+        mediaOptions.publishMicrophoneTrack = true
+        mediaOptions.publishCustomVideoTrack = true
+        mediaOptions.customVideoTrackId = Int(builtInCameraTrackId)
         mediaOptions.autoSubscribeVideo = false
         mediaOptions.autoSubscribeAudio = false
         mediaOptions.clientRoleType = .broadcaster
@@ -93,30 +81,34 @@ class AgoraViewModel: NSObject, ObservableObject {
         agoraKit.joinChannelEx(byToken: nil, connection: connection, delegate: self, mediaOptions: mediaOptions)
     }
     
-    func agoraSetupRemoteVideo(connection: AgoraRtcConnection, remoteID: UInt, remoteView: UIView, streamType: AgoraVideoStreamType) {
-        let videoCanvas = AgoraRtcVideoCanvas()
-        videoCanvas.uid = remoteID
-        videoCanvas.renderMode = .hidden
-        videoCanvas.view = remoteView
-        agoraKit.setupRemoteVideoEx(videoCanvas, connection: connection)
-        agoraKit.setRemoteVideoStreamEx(remoteID, type: streamType, connection: connection)
+    func joinChannelExternalCamera() {
+        // Create connection
+        let connection = AgoraRtcConnection()
+        connection.channelId = agoraChannel
+        connection.localUid = builtInCameraUid
+
+        // Setup media option to send custom video track ONLY
+        let mediaOptions = AgoraRtcChannelMediaOptions()
+        mediaOptions.publishCameraTrack = false
+        mediaOptions.publishMicrophoneTrack = false
+        mediaOptions.publishCustomVideoTrack = true
+        mediaOptions.customVideoTrackId = Int(externalCameraTrackId)
+        mediaOptions.autoSubscribeVideo = false
+        mediaOptions.autoSubscribeAudio = false
+        mediaOptions.clientRoleType = .broadcaster
+        
+        agoraKit.joinChannelEx(byToken: nil, connection: connection, delegate: self, mediaOptions: mediaOptions)
     }
     
-    func setupBuiltInCamera() {
-         // Create video source for built-in camera
-        builtInCameraSource = AgoraCameraSourcePush(delegate: self)
-        builtInCameraSource?.startCapture(ofCamera: .front)
-        
-     }
-    
-    func setupExternalCamera() {
-         // Create video source for built-in camera
-        externalCameraSource = AgoraCameraSourcePush(delegate: self)
-        externalCameraSource?.startCapture(ofCamera: .external)
-        
-     }
-     
-     
+//    func agoraSetupRemoteVideo(connection: AgoraRtcConnection, remoteID: UInt, remoteView: UIView, streamType: AgoraVideoStreamType) {
+//        let videoCanvas = AgoraRtcVideoCanvas()
+//        videoCanvas.uid = remoteID
+//        videoCanvas.renderMode = .hidden
+//        videoCanvas.view = remoteView
+//        agoraKit.setupRemoteVideoEx(videoCanvas, connection: connection)
+//        agoraKit.setRemoteVideoStreamEx(remoteID, type: streamType, connection: connection)
+//    }
+//     
 //    func setupExternalCamera() {
 //         // Create video source for external camera
 //         externalCameraSource = AgoraCameraVideoSource()
@@ -190,7 +182,7 @@ class AgoraViewModel: NSObject, ObservableObject {
 
 
 //// MARK: Main Agora callbacks
-extension AgoraViewModel: AgoraRtcEngineDelegate, AgoraCameraSourcePushDelegate {
+extension AgoraViewModel: AgoraRtcEngineDelegate {
     // When local user joined
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int) {
     }
@@ -204,3 +196,23 @@ extension AgoraViewModel: AgoraRtcEngineDelegate, AgoraCameraSourcePushDelegate 
         
     }
 }
+
+
+extension AgoraViewModel: CustomVideoSourceMultiChannelDelegate {
+    func captureOutput(cameraType: Camera, _ capture: AgoraCameraSourcePush, didOutputSampleBuffer pixelBuffer: CVPixelBuffer, rotation: Int, timeStamp: CMTime) {
+        
+        // Convert custom video data to AgoraVideoFrame
+        let videoFrame = AgoraVideoFrame()
+        videoFrame.format = AgoraVideoFormat.cvPixelNV12.rawValue
+
+        // Push the AgoraVideoFrame to Agora Channel
+        videoFrame.textureBuf = pixelBuffer
+        videoFrame.rotation = Int32(rotation)
+        // once we have the video frame, we can push to agora sdk
+        let result = agoraKit.pushExternalVideoFrame(videoFrame, videoTrackId: cameraType == .front ? builtInCameraUid : externalCameraUid)
+        print("Bac's pushExternal result \(result)")
+        
+    }
+    
+}
+
