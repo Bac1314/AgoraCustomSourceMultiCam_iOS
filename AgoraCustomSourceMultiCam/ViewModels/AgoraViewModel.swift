@@ -13,8 +13,9 @@ class AgoraViewModel: NSObject, ObservableObject {
     
     // MARK: AGORA PROPERTIES
     var agoraKit: AgoraRtcEngineKit = AgoraRtcEngineKit()
-    var agoraAppID = ""
-    var agoraChannel = "channel_bac"
+    var agoraAppID = "d5af82b4b85e4838b2caec2a84e71cf3"
+    @Published var agoraChannel = "channel_bac"
+    @Published var isJoined = false
     
     // RTC UIDs
     var frontCameraUid: UInt = 123
@@ -54,23 +55,33 @@ class AgoraViewModel: NSObject, ObservableObject {
         agoraKit.enableVideo()
         agoraKit.enableAudio()
         
-        setupMultiCameraCapture()
-        
-        // Create 3 connections (uid) to join the same channel
-        joinConnectionChannel(uid: frontCameraUid, token: frontCameraUidToken, trackID: frontCameraTrackId, agoraMultiChannelDelegator: frontCameraConnectionDelegator, publishMicrophone: true)
-        
-        joinConnectionChannel(uid: backCameraUid, token: backCameraUidToken, trackID: backCameraTrackId, agoraMultiChannelDelegator: backCameraConnectionDelegator, publishMicrophone: false)
-        
-        joinConnectionChannel(uid: externalCameraUid, token: externalCameraUidToken , trackID: externalCameraTrackId, agoraMultiChannelDelegator: externalCameraConnectionDelegator, publishMicrophone: false)
     }
     
-    func setupMultiCameraCapture() {
+    func startMultiCameraStreaming() {
+        // Setup custom tracks for Agora SDK
         frontCameraTrackId = UInt(agoraKit.createCustomVideoTrack()) // get track id
         externalCameraTrackId = UInt(agoraKit.createCustomVideoTrack()) // get track id
         backCameraTrackId = UInt(agoraKit.createCustomVideoTrack()) // get track id
         
+        // Start multi camera capture
         multiCameraSource = MultiCameraSourcePush(delegate: self)
         multiCameraSource?.startCapture()
+        
+        // Create 3 connections (uid) to join the same channel
+        joinConnectionChannel(uid: frontCameraUid, token: frontCameraUidToken, trackID: frontCameraTrackId, agoraMultiChannelDelegator: frontCameraConnectionDelegator, publishMicrophone: true)
+        joinConnectionChannel(uid: backCameraUid, token: backCameraUidToken, trackID: backCameraTrackId, agoraMultiChannelDelegator: backCameraConnectionDelegator, publishMicrophone: false)
+        joinConnectionChannel(uid: externalCameraUid, token: externalCameraUidToken , trackID: externalCameraTrackId, agoraMultiChannelDelegator: externalCameraConnectionDelegator, publishMicrophone: false)
+    }
+    
+    func stopMultiCameraStreaming() {
+        isJoined = false
+        multiCameraSource?.stopCapture()
+        multiCameraSource = nil
+        
+        leaveConnectionChannel(uid: frontCameraUid)
+        leaveConnectionChannel(uid: backCameraUid)
+        leaveConnectionChannel(uid: externalCameraUid)
+        
     }
     
     func joinConnectionChannel(uid: UInt, token: String?, trackID: UInt,  agoraMultiChannelDelegator: AgoraMultiDelegator, publishMicrophone: Bool) {
@@ -95,6 +106,15 @@ class AgoraViewModel: NSObject, ObservableObject {
         
         agoraKit.joinChannelEx(byToken: token, connection: connection, delegate: agoraMultiChannelDelegator, mediaOptions: mediaOptions)
     }
+    
+    func leaveConnectionChannel(uid: UInt) {
+        let connection = AgoraRtcConnection()
+        connection.channelId = agoraChannel
+        connection.localUid = uid
+        
+        agoraKit.leaveChannelEx(connection)
+
+    }
 }
 
 
@@ -107,6 +127,7 @@ extension AgoraViewModel: AgoraRtcEngineDelegate {
     // Local user leaves
     func rtcEngine(_ engine: AgoraRtcEngineKit, didLeaveChannelWith stats: AgoraChannelStats) {
     }
+    
 }
 
 extension AgoraViewModel: AgoraMultiChannelDelegate {
@@ -120,6 +141,9 @@ extension AgoraViewModel: AgoraMultiChannelDelegate {
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, connectionId: AgoraRtcConnection, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int) {
         print("Bac's didJoinChannel with uid \(uid)")
+        if !isJoined {
+            isJoined = true
+        }
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, connectionId: AgoraRtcConnection, didJoinedOfUid uid: UInt, elapsed: Int) {
