@@ -22,9 +22,9 @@ class AgoraViewModel: NSObject, ObservableObject {
     var externalCameraUid: UInt = 789
     
     // RTC Tokens (tokens not needed if project didn't enable certificate)
-    var frontCameraUidToken : String = ""
-    var backCameraUidToken : String = ""
-    var externalCameraUidToken : String = ""
+    var frontCameraUidToken : String?
+    var backCameraUidToken : String?
+    var externalCameraUidToken : String?
     
     // Custom Video Track IDs
     var frontCameraTrackId: UInt = 0
@@ -35,7 +35,8 @@ class AgoraViewModel: NSObject, ObservableObject {
     var frontCameraConnectionDelegator: AgoraMultiDelegator = AgoraMultiDelegator()
     var backCameraConnectionDelegator: AgoraMultiDelegator = AgoraMultiDelegator()
     var externalCameraConnectionDelegator: AgoraMultiDelegator = AgoraMultiDelegator()
-    var multiCameraSource: MultiCameraSourcePush?
+    
+    var multiCameraSource: MultiCameraSourcePush? // Multi camera source delegator
     
     // Local Views
     var frontCameraUIView: LocalUIViewRepresent = LocalUIViewRepresent()
