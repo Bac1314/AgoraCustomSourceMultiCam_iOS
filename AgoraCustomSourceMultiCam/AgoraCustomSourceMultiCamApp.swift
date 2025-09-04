@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct AgoraCustomSourceMultiCamApp: App {
+    @StateObject var agoraVM : AgoraViewModel = AgoraViewModel()
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(agoraVM)
         }
     }
 }

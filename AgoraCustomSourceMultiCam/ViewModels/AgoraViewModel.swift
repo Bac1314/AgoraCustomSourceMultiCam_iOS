@@ -1,0 +1,175 @@
+//
+//  AgoraViewModel.swift
+//  AgoraCustomSourceMultiCam
+//
+//  Created by Bac Huang on 2/9/25.
+//
+
+import Foundation
+import AgoraRtcKit
+import AVFoundation
+
+class AgoraViewModel: NSObject, ObservableObject {
+    
+    // MARK: AGORA PROPERTIES
+    var agoraKit: AgoraRtcEngineKit = AgoraRtcEngineKit()
+    var agoraAppID = ""
+    var agoraChannel = "channel_bac"
+    
+    // RTC UIDs
+    var frontCameraUid: UInt = 123
+    var backCameraUid: UInt = 456
+    var externalCameraUid: UInt = 789
+    
+    // RTC Tokens (tokens not needed if project didn't enable certificate)
+    var frontCameraUidToken : String = ""
+    var backCameraUidToken : String = ""
+    var externalCameraUidToken : String = ""
+    
+    // Custom Video Track IDs
+    var frontCameraTrackId: UInt = 0
+    var backCameraTrackId: UInt = 0
+    var externalCameraTrackId: UInt = 0
+
+     // Delegates
+    var frontCameraConnectionDelegator: AgoraMultiDelegator = AgoraMultiDelegator()
+    var backCameraConnectionDelegator: AgoraMultiDelegator = AgoraMultiDelegator()
+    var externalCameraConnectionDelegator: AgoraMultiDelegator = AgoraMultiDelegator()
+    var multiCameraSource: MultiCameraSourcePush?
+    
+    // Local Views
+    var frontCameraUIView: LocalUIViewRepresent = LocalUIViewRepresent()
+    var backCameraUIView: LocalUIViewRepresent = LocalUIViewRepresent()
+    var externalCameraUIView: LocalUIViewRepresent = LocalUIViewRepresent()
+    
+    override init(){
+        super.init()
+        
+        // MARK: Agora Initialization
+        let config = AgoraRtcEngineConfig()
+        config.appId = agoraAppID
+        agoraKit = AgoraRtcEngineKit.sharedEngine(with: config, delegate: self)
+    
+        agoraKit.enableVideo()
+        agoraKit.enableAudio()
+        
+        setupMultiCameraCapture()
+        
+        // Create 3 connections (uid) to join the same channel
+        joinConnectionChannel(uid: frontCameraUid, token: frontCameraUidToken, trackID: frontCameraTrackId, agoraMultiChannelDelegator: frontCameraConnectionDelegator, publishMicrophone: true)
+        
+        joinConnectionChannel(uid: backCameraUid, token: backCameraUidToken, trackID: backCameraTrackId, agoraMultiChannelDelegator: backCameraConnectionDelegator, publishMicrophone: false)
+        
+        joinConnectionChannel(uid: externalCameraUid, token: externalCameraUidToken , trackID: externalCameraTrackId, agoraMultiChannelDelegator: externalCameraConnectionDelegator, publishMicrophone: false)
+    }
+    
+    func setupMultiCameraCapture() {
+        frontCameraTrackId = UInt(agoraKit.createCustomVideoTrack()) // get track id
+        externalCameraTrackId = UInt(agoraKit.createCustomVideoTrack()) // get track id
+        backCameraTrackId = UInt(agoraKit.createCustomVideoTrack()) // get track id
+        
+        multiCameraSource = MultiCameraSourcePush(delegate: self)
+        multiCameraSource?.startCapture()
+    }
+    
+    func joinConnectionChannel(uid: UInt, token: String?, trackID: UInt,  agoraMultiChannelDelegator: AgoraMultiDelegator, publishMicrophone: Bool) {
+        // Create connection
+        let connection = AgoraRtcConnection()
+        connection.channelId = agoraChannel
+        connection.localUid = uid
+
+        // Setup delegator
+        agoraMultiChannelDelegator.connectionDelegate = self
+        agoraMultiChannelDelegator.connectionId = connection
+
+        // Setup media option to send custom video track and microphone track
+        let mediaOptions = AgoraRtcChannelMediaOptions()
+        mediaOptions.publishCameraTrack = false
+        mediaOptions.publishMicrophoneTrack = publishMicrophone // Publish microphone from this connection
+        mediaOptions.publishCustomVideoTrack = true
+        mediaOptions.customVideoTrackId = Int(trackID)
+        mediaOptions.autoSubscribeVideo = false
+        mediaOptions.autoSubscribeAudio = false
+        mediaOptions.clientRoleType = .broadcaster
+        
+        agoraKit.joinChannelEx(byToken: token, connection: connection, delegate: agoraMultiChannelDelegator, mediaOptions: mediaOptions)
+    }
+}
+
+
+//// MARK: Main Agora callbacks
+extension AgoraViewModel: AgoraRtcEngineDelegate {
+    // When local user joined
+    func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int) {
+    }
+    
+    // Local user leaves
+    func rtcEngine(_ engine: AgoraRtcEngineKit, didLeaveChannelWith stats: AgoraChannelStats) {
+    }
+}
+
+extension AgoraViewModel: AgoraMultiChannelDelegate {
+    func rtcEngine(_ engine: AgoraRtcEngineKit, connectionId: AgoraRtcConnection, didOccurWarning warningCode: AgoraWarningCode) {
+        
+    }
+    
+    func rtcEngine(_ engine: AgoraRtcEngineKit, connectionId: AgoraRtcConnection, didOccurError errorCode: AgoraErrorCode) {
+    
+    }
+    
+    func rtcEngine(_ engine: AgoraRtcEngineKit, connectionId: AgoraRtcConnection, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int) {
+        print("Bac's didJoinChannel with uid \(uid)")
+    }
+    
+    func rtcEngine(_ engine: AgoraRtcEngineKit, connectionId: AgoraRtcConnection, didJoinedOfUid uid: UInt, elapsed: Int) {
+    }
+    
+    func rtcEngine(_ engine: AgoraRtcEngineKit, connectionId: AgoraRtcConnection, didOfflineOfUid uid: UInt, reason: AgoraUserOfflineReason) {
+    }
+    
+    func rtcEngine(_ engine: AgoraRtcEngineKit, connectionId: AgoraRtcConnection, tokenPrivilegeWillExpire token: String) {
+    }
+    
+    
+}
+
+extension AgoraViewModel: MultiCameraSourcePushDelegate {
+    func myVideoCapture(_ capture: MultiCameraSourcePush, didOutputSampleBuffer pixelBuffer: CVPixelBuffer, from camera: Camera, rotation: Int, timeStamp: CMTime) {
+        // Convert custom video data to AgoraVideoFrame
+        let videoFrame = AgoraVideoFrame()
+        videoFrame.format = AgoraVideoFormat.cvPixelNV12.rawValue
+
+        // Push the AgoraVideoFrame to Agora Channel
+        videoFrame.textureBuf = pixelBuffer
+        videoFrame.rotation = Int32(rotation)
+        // once we have the video frame, we can push to agora sdk
+        
+        if camera == .front {
+            let result = agoraKit.pushExternalVideoFrame(videoFrame, videoTrackId: frontCameraTrackId)
+            print("Bac's myVideoCapture camera \(camera) result \(result)")
+            
+            // Render local view
+            DispatchQueue.main.async {
+                self.frontCameraUIView.containerPreview.display(pixelBuffer: pixelBuffer, timeStamp: timeStamp)
+            }
+        }else if camera == .back {
+            let result = agoraKit.pushExternalVideoFrame(videoFrame, videoTrackId: backCameraTrackId)
+            print("Bac's myVideoCapture camera \(camera) result \(result)")
+            
+            // Render local view
+            DispatchQueue.main.async {
+                self.backCameraUIView.containerPreview.display(pixelBuffer: pixelBuffer, timeStamp: timeStamp)
+            }
+        }else if camera == .external {
+            let result = agoraKit.pushExternalVideoFrame(videoFrame, videoTrackId: externalCameraTrackId)
+            print("Bac's myVideoCapture camera \(camera) result \(result)")
+            
+            // Render local view
+            DispatchQueue.main.async {
+                self.externalCameraUIView.containerPreview.display(pixelBuffer: pixelBuffer, timeStamp: timeStamp)
+            }
+        }
+    }
+    
+    
+}
