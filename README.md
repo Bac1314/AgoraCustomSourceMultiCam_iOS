@@ -6,10 +6,22 @@ This project demonstrates how to use the **Agora RTC SDK for iOS** with a **cust
 
 ## Features
 
-- **Custom Video Source**: Uses `AVCaptureSession` and `AVCaptureDeviceInput` to capture raw frames from cameras.
-- **Multi-Camera Support**: Publishes both the built-in iPhone camera and an external USB camera.
+- **Custom Video Source**: Uses `AVCaptureMultiCamSession` and `AVCaptureDeviceInput` to capture raw frames from cameras.
+- **Multi-Camera Support**: Publishes both the built-in iPhone front camera, back camera, and an external USB camera at the same time.
 - **Multi-Channel Connection**: Demonstrates joining multiple connections with Agora SDK and publishing custom video tracks.
-- **Flexible Pipeline**: Developers can extend to include filters, beauty, or third-party processing.
+
+---
+
+## File Overview
+
+| File/Folder                                         | Description                                                                                    |
+|-----------------------------------------------------|------------------------------------------------------------------------------------------------|
+| `Views/ContentView.swift`                           | The main view to display all the 3 local video streams                                         |
+| `Views/LocalUIViewRepresent.swift`                  | SwiftUI/UIView bridge for rendering local video frames using AVSampleBufferDisplayLayer.       |
+| `Models/MultiCameraSourcePushDelegate.swift`        | Protocol and delegator for multi-camera video capture and delegation.                          |
+| `Models/AgoraMultiChannelDelegate.swift`            | Protocol and delegator for handling multiple Agora channel callbacks.                          |
+| `ViewModels/AgoraViewModel.swift`                   | Main view model. Manages Agora engine, channel connections, and custom video track publishing. |
+| `Podfile`                                           | CocoaPods dependencies configuration.                                                          |
 
 ---
 
@@ -27,7 +39,7 @@ This project demonstrates how to use the **Agora RTC SDK for iOS** with a **cust
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/AgoraCustomSourceMultiCam.git
+   git clone https://github.com/Bac1314/AgoraCustomSourceMultiCam_iOS.git
    cd AgoraCustomSourceMultiCam
    ```
    
@@ -41,11 +53,16 @@ This project demonstrates how to use the **Agora RTC SDK for iOS** with a **cust
    ```bash
     open AgoraCustomSourceMultiCam.xcworkspace
    ```
-4. Add your Agora App ID and Token in AppID.swift:
+4. Add your Agora App ID, channel, and token in AgoraViewModel.swift:
 
    ```swift
-    let agoraAppId: String = "<#Your App ID#>"
-    let agoraToken: String? = "<#Your Token#>"
+    var agoraAppID = ""
+    @Published var agoraChannel = "channel_bac"
+
+   // RTC Tokens (tokens not needed if project didn't enable certificate)
+    var frontCameraUidToken : String = ""
+    var backCameraUidToken : String = ""
+    var externalCameraUidToken : String = ""
    ```
    
 ## Usage
@@ -53,8 +70,9 @@ This project demonstrates how to use the **Agora RTC SDK for iOS** with a **cust
 2. Run the project on a physical iPhone device.
 3. Enter a channel name and join.
 4. The app will publish streams from:
-- **iPhone internal camera
+- **iPhone internal cameras
 - **USB external camera
+5. Use [https://webdemo-na.agora.io/basicLive/index.html][Agora Web demo] to join the same channel as an audience, you should be able to see the streams 
 
 Both streams will be visible to remote participants in the same channel.
 
