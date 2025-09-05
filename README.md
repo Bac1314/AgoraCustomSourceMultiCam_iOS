@@ -1,13 +1,13 @@
 # AgoraCustomSourceMultiCam (iOS)
 
-This project demonstrates how to use the **Agora RTC SDK for iOS** with a **custom video source** to publish video streams from both the **internal iPhone camera** and an **external USB camera** into the same channel. It also shows how to use the **multi-channel connection feature** to manage multiple video sources.
+This project demonstrates how to use the **Agora RTC SDK for iOS** with a **custom video source** to publish video streams from both the **internal iPad cameras**, and an **external USB camera** into the same channel. It also shows how to use the **multi-channel connection feature** to manage multiple video sources.
 
 ---
 
 ## Features
 
 - **Custom Video Source**: Uses `AVCaptureMultiCamSession` and `AVCaptureDeviceInput` to capture raw frames from cameras.
-- **Multi-Camera Support**: Publishes both the built-in iPhone front camera, back camera, and an external USB camera at the same time.
+- **Multi-Camera Support**: Publishes both the built-in iPad front camera, back camera, and an external USB camera at the same time.
 - **Multi-Channel Connection**: Demonstrates joining multiple connections with Agora SDK and publishing custom video tracks.
 
 ---
@@ -29,7 +29,7 @@ This project demonstrates how to use the **Agora RTC SDK for iOS** with a **cust
 
 - **Xcode 15.0 or later**  
 - **iOS 14.0 or later**  
-- **Physical iPhone device** (multi-camera capture is not supported in Simulator)  
+- **Physical iPad device** (multi-camera capture is not supported in Simulator)  
 - **External USB camera** (via Lightning/USB-C adapter)  
 - **Agora RTC iOS SDK 4.6.0** (installed via CocoaPods)  
 
@@ -66,11 +66,12 @@ This project demonstrates how to use the **Agora RTC SDK for iOS** with a **cust
    ```
    
 ## Usage
-1. Connect an external USB camera to your iPhone.
-2. Run the project on a physical iPhone device.
+1. Connect an external USB camera to your iPad.
+2. Run the project on a physical iPad device.
 3. Enter a channel name and join.
 4. The app will publish streams from:
-- **iPhone internal cameras
+- **iPad internal cameras
+- **iPad external cameras
 - **USB external camera
 5. Use [https://webdemo-na.agora.io/basicLive/index.html][Agora Web demo] to join the same channel as an audience, you should be able to see the streams 
 
