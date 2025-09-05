@@ -72,8 +72,11 @@ class MultiCameraSourcePush: NSObject {
     
     // MARK: - Public API
     func startCapture() {
-        setupMultiCam()
-        captureSession.startRunning()
+        DispatchQueue.global().async {
+            self.setupMultiCam()
+            self.captureSession.startRunning()
+        }
+
     }
     
     func stopCapture() {
