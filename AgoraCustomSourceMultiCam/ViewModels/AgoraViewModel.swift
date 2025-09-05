@@ -40,9 +40,12 @@ class AgoraViewModel: NSObject, ObservableObject {
     var multiCameraSource: MultiCameraSourcePush? // Multi camera source delegator
     
     // Local Views
+    var resolutionSize: CGSize = CGSize(width: 720, height: 1280)
     var frontCameraUIView: LocalUIViewRepresent = LocalUIViewRepresent()
     var backCameraUIView: LocalUIViewRepresent = LocalUIViewRepresent()
     var externalCameraUIView: LocalUIViewRepresent = LocalUIViewRepresent()
+    
+//    var testingUIView: LocalUIViewRepresent2 = LocalUIViewRepresent2()
     
     override init(){
         super.init()
@@ -100,10 +103,14 @@ class AgoraViewModel: NSObject, ObservableObject {
         mediaOptions.publishMicrophoneTrack = publishMicrophone // Publish microphone from this connection
         mediaOptions.publishCustomVideoTrack = true
         mediaOptions.customVideoTrackId = Int(trackID)
-        mediaOptions.autoSubscribeVideo = false
-        mediaOptions.autoSubscribeAudio = false
+        mediaOptions.autoSubscribeVideo = false // Autosub false to ensure you don't sub your own streams (aka cost)
+        mediaOptions.autoSubscribeAudio = false // Autosub false to ensure you don't sub your own streams (aka cost)
         mediaOptions.clientRoleType = .broadcaster
+    
+        // Set video encoding resolution
+        agoraKit.setVideoEncoderConfigurationEx(AgoraVideoEncoderConfiguration(size: resolutionSize, frameRate: .fps30, bitrate: AgoraVideoBitrateStandard, orientationMode: .adaptative, mirrorMode: .auto), connection: connection)
         
+        // Join channel
         agoraKit.joinChannelEx(byToken: token, connection: connection, delegate: agoraMultiChannelDelegator, mediaOptions: mediaOptions)
     }
     
@@ -116,7 +123,6 @@ class AgoraViewModel: NSObject, ObservableObject {
 
     }
 }
-
 
 //// MARK: Main Agora callbacks
 extension AgoraViewModel: AgoraRtcEngineDelegate {
@@ -147,6 +153,7 @@ extension AgoraViewModel: AgoraMultiChannelDelegate {
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, connectionId: AgoraRtcConnection, didJoinedOfUid uid: UInt, elapsed: Int) {
+        print("Bac's remote user joined with uid \(uid) ")
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, connectionId: AgoraRtcConnection, didOfflineOfUid uid: UInt, reason: AgoraUserOfflineReason) {
@@ -169,6 +176,14 @@ extension AgoraViewModel: MultiCameraSourcePushDelegate {
         videoFrame.rotation = Int32(rotation)
         // once we have the video frame, we can push to agora sdk
         
+////        // OutputVideo
+//        let outputVideoFrame = AgoraOutputVideoFrame()
+//        outputVideoFrame.width = Int32(resolutionSize.width)
+//        outputVideoFrame.height = Int32(resolutionSize.height)
+//        outputVideoFrame.pixelBuffer = pixelBuffer
+//        outputVideoFrame.rotation = Int32(rotation)
+//        
+        
         if camera == .front {
             let result = agoraKit.pushExternalVideoFrame(videoFrame, videoTrackId: frontCameraTrackId)
             print("Bac's myVideoCapture camera \(camera) result \(result)")
@@ -176,6 +191,7 @@ extension AgoraViewModel: MultiCameraSourcePushDelegate {
             // Render local view
             DispatchQueue.main.async {
                 self.frontCameraUIView.containerPreview.display(pixelBuffer: pixelBuffer, timeStamp: timeStamp)
+//                self.testingUIView.containerPreview.renderVideoPixelBuffer(outputVideoFrame)
             }
         }else if camera == .back {
             let result = agoraKit.pushExternalVideoFrame(videoFrame, videoTrackId: backCameraTrackId)
@@ -194,6 +210,7 @@ extension AgoraViewModel: MultiCameraSourcePushDelegate {
                 self.externalCameraUIView.containerPreview.display(pixelBuffer: pixelBuffer, timeStamp: timeStamp)
             }
         }
+        
     }
     
     

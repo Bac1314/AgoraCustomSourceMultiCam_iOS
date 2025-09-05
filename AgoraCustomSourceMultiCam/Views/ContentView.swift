@@ -53,6 +53,10 @@ struct ContentView: View {
                 agoraVM.externalCameraUIView
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 
+//                agoraVM.testingUIView
+//                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+
+                
                 Text("Stop Streaming")
                     .font(.headline)
                     .bold()

@@ -24,36 +24,62 @@ struct LocalUIViewRepresent : UIViewRepresentable {
 }
 
 class LocalVideoPreview: UIView {
+//    private var videoWidth: Int = 0
+//    private var videoHeight: Int = 0
     private let displayLayer = AVSampleBufferDisplayLayer()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupLayer()
+        setupDisplayLayer()
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setupLayer()
+        setupDisplayLayer()
+    }
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        setupDisplayLayer()
     }
 
-    private func setupLayer() {
-        displayLayer.videoGravity = .resizeAspectFill
-//        displayLayer.cornerRadius = 16
+    private func setupDisplayLayer() {
+//        displayLayer.videoGravity = .resizeAspectFill
         layer.addSublayer(displayLayer)
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
         displayLayer.frame = bounds
+//        layoutDisplayLayer()
     }
+    
+//    private func layoutDisplayLayer() {
+//        guard videoWidth > 0, videoHeight > 0, !frame.size.equalTo(.zero) else {
+//            return
+//        }
+//        
+//        let viewWidth = frame.size.width
+//        let viewHeight = frame.size.height
+//        let videoRatio = CGFloat(videoWidth) / CGFloat(videoHeight)
+//        let viewRatio = viewWidth / viewHeight
+//
+//        let renderRect = CGRect(x: 0, y: 0, width: viewWidth, height: viewHeight)
+//        if !displayLayer.frame.equalTo(renderRect) {
+//            displayLayer.frame = renderRect
+//        }
+//    }
+//    
 
     func display(pixelBuffer: CVPixelBuffer, timeStamp: CMTime) {
+        // Timing info
         var timingInfo = CMSampleTimingInfo(
-            duration: .invalid,
+            duration: .zero,
             presentationTimeStamp: timeStamp,
             decodeTimeStamp: .invalid
         )
 
+        // Video format
         var videoFormatDesc: CMVideoFormatDescription?
         CMVideoFormatDescriptionCreateForImageBuffer(
             allocator: kCFAllocatorDefault,
@@ -75,5 +101,6 @@ class LocalVideoPreview: UIView {
         if let buffer = sampleBuffer {
             displayLayer.enqueue(buffer)
         }
+        
     }
 }
