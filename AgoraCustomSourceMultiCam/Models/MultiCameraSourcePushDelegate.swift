@@ -108,6 +108,8 @@ class MultiCameraSourcePush: NSObject {
             position: .unspecified
         ).devices.first {
             addCamera(externalCamera, type: .external)
+        } else {
+            print("⚠️ No External Camera detected")
         }
         
         captureSession.commitConfiguration()
