@@ -189,31 +189,32 @@ extension AgoraViewModel: MultiCameraSourcePushDelegate {
             print("Bac's myVideoCapture camera \(camera) result \(result)")
             
             // Render local view
-            Task {
-                await MainActor.run {
-                    self.frontCameraUIView.containerPreview.display(pixelBuffer: pixelBuffer, timeStamp: timeStamp)
-                    //                self.testingUIView.containerPreview.renderVideoPixelBuffer(outputVideoFrame)
-                }
+//            Task {
+//                await MainActor.run {
+//                    self.frontCameraUIView.containerPreview.display(pixelBuffer: pixelBuffer, timeStamp: timeStamp)
+//                    //                self.testingUIView.containerPreview.renderVideoPixelBuffer(outputVideoFrame)
+//                }
+//            }
+            
+            // Use DispatchQueue instead of Task, to avoid Task overhead 
+            DispatchQueue.main.async {
+                self.frontCameraUIView.containerPreview.display(pixelBuffer: pixelBuffer, timeStamp: timeStamp)
             }
         }else if camera == .back {
             let result = agoraKit.pushExternalVideoFrame(videoFrame, videoTrackId: backCameraTrackId)
             print("Bac's myVideoCapture camera \(camera) result \(result)")
             
             // Render local view
-            Task {
-                await MainActor.run {
-                    self.backCameraUIView.containerPreview.display(pixelBuffer: pixelBuffer, timeStamp: timeStamp)
-                }
+            DispatchQueue.main.async {
+                self.backCameraUIView.containerPreview.display(pixelBuffer: pixelBuffer, timeStamp: timeStamp)
             }
         }else if camera == .external {
             let result = agoraKit.pushExternalVideoFrame(videoFrame, videoTrackId: externalCameraTrackId)
             print("Bac's myVideoCapture camera \(camera) result \(result)")
             
             // Render local view
-            Task {
-                await MainActor.run {
-                    self.externalCameraUIView.containerPreview.display(pixelBuffer: pixelBuffer, timeStamp: timeStamp)
-                }
+            DispatchQueue.main.async {
+                self.externalCameraUIView.containerPreview.display(pixelBuffer: pixelBuffer, timeStamp: timeStamp)
             }
         }
         
