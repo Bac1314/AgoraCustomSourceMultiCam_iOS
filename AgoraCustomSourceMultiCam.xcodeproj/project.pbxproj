@@ -10,7 +10,7 @@
 		991980AD34F3325539F15FB6 /* Pods_AgoraCustomSourceMultiCam.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B59E64E9D538DE1D493E6798 /* Pods_AgoraCustomSourceMultiCam.framework */; };
 		B80DE5182E692AA200CAD560 /* MultiCameraSourcePushDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80DE5172E692AA200CAD560 /* MultiCameraSourcePushDelegate.swift */; };
 		B80DE51B2E692E5800CAD560 /* AgoraMultiChannelDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80DE51A2E692E5800CAD560 /* AgoraMultiChannelDelegate.swift */; };
-		B80DE51D2E6940DF00CAD560 /* LocalUIViewRepresent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80DE51C2E6940DF00CAD560 /* LocalUIViewRepresent.swift */; };
+		B80DE51D2E6940DF00CAD560 /* UIViewRepresent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80DE51C2E6940DF00CAD560 /* UIViewRepresent.swift */; };
 		B80DE5432E699B3400CAD560 /* AgoraSampleBufferRender.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80DE5422E699B3400CAD560 /* AgoraSampleBufferRender.swift */; };
 		B8FF71F52E66EB8B005F472C /* AgoraCustomSourceMultiCamApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FF71F02E66EB8B005F472C /* AgoraCustomSourceMultiCamApp.swift */; };
 		B8FF71F62E66EB8B005F472C /* AgoraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FF71F12E66EB8B005F472C /* AgoraViewModel.swift */; };
@@ -25,7 +25,7 @@
 		B80DE5172E692AA200CAD560 /* MultiCameraSourcePushDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiCameraSourcePushDelegate.swift; sourceTree = "<group>"; };
 		B80DE5192E692B6D00CAD560 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B80DE51A2E692E5800CAD560 /* AgoraMultiChannelDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraMultiChannelDelegate.swift; sourceTree = "<group>"; };
-		B80DE51C2E6940DF00CAD560 /* LocalUIViewRepresent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalUIViewRepresent.swift; sourceTree = "<group>"; };
+		B80DE51C2E6940DF00CAD560 /* UIViewRepresent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewRepresent.swift; sourceTree = "<group>"; };
 		B80DE5422E699B3400CAD560 /* AgoraSampleBufferRender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraSampleBufferRender.swift; sourceTree = "<group>"; };
 		B8FF71DE2E66EB30005F472C /* AgoraCustomSourceMultiCam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AgoraCustomSourceMultiCam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B8FF71F02E66EB8B005F472C /* AgoraCustomSourceMultiCamApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraCustomSourceMultiCamApp.swift; sourceTree = "<group>"; };
@@ -67,7 +67,7 @@
 			isa = PBXGroup;
 			children = (
 				B8FF71F32E66EB8B005F472C /* ContentView.swift */,
-				B80DE51C2E6940DF00CAD560 /* LocalUIViewRepresent.swift */,
+				B80DE51C2E6940DF00CAD560 /* UIViewRepresent.swift */,
 				B80DE5422E699B3400CAD560 /* AgoraSampleBufferRender.swift */,
 			);
 			path = Views;
@@ -220,9 +220,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-AgoraCustomSourceMultiCam/Pods-AgoraCustomSourceMultiCam-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-AgoraCustomSourceMultiCam/Pods-AgoraCustomSourceMultiCam-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -242,7 +246,7 @@
 				B8FF71F72E66EB8B005F472C /* ContentView.swift in Sources */,
 				B80DE5432E699B3400CAD560 /* AgoraSampleBufferRender.swift in Sources */,
 				B80DE5182E692AA200CAD560 /* MultiCameraSourcePushDelegate.swift in Sources */,
-				B80DE51D2E6940DF00CAD560 /* LocalUIViewRepresent.swift in Sources */,
+				B80DE51D2E6940DF00CAD560 /* UIViewRepresent.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

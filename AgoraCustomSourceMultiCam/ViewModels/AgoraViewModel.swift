@@ -41,11 +41,13 @@ class AgoraViewModel: NSObject, ObservableObject {
     
     // Local Views
     var resolutionSize: CGSize = CGSize(width: 720, height: 1280)
+    
     var frontCameraUIView: LocalUIViewRepresent = LocalUIViewRepresent()
     var backCameraUIView: LocalUIViewRepresent = LocalUIViewRepresent()
     var externalCameraUIView: LocalUIViewRepresent = LocalUIViewRepresent()
     
-//    var testingUIView: LocalUIViewRepresent2 = LocalUIViewRepresent2()
+    // Remote User + Views
+    @Published var remoteUsersViewList: [(UInt, RemoteUIViewRepresent)] = []
     
     override init(){
         super.init()
@@ -71,9 +73,9 @@ class AgoraViewModel: NSObject, ObservableObject {
         multiCameraSource?.startCapture()
         
         // Create 3 connections (uid) to join the same channel
-        joinConnectionChannel(uid: frontCameraUid, token: frontCameraUidToken, trackID: frontCameraTrackId, agoraMultiChannelDelegator: frontCameraConnectionDelegator, publishMicrophone: true)
-        joinConnectionChannel(uid: backCameraUid, token: backCameraUidToken, trackID: backCameraTrackId, agoraMultiChannelDelegator: backCameraConnectionDelegator, publishMicrophone: false)
-        joinConnectionChannel(uid: externalCameraUid, token: externalCameraUidToken , trackID: externalCameraTrackId, agoraMultiChannelDelegator: externalCameraConnectionDelegator, publishMicrophone: false)
+        joinMainChannel(uid: frontCameraUid, token: frontCameraUidToken, trackID: frontCameraTrackId) // Will use main joinChannel Method
+        joinConnectionChannel(uid: backCameraUid, token: backCameraUidToken, trackID: backCameraTrackId, agoraMultiChannelDelegator: backCameraConnectionDelegator) // Will use joinChannelEX
+        joinConnectionChannel(uid: externalCameraUid, token: externalCameraUidToken , trackID: externalCameraTrackId, agoraMultiChannelDelegator: externalCameraConnectionDelegator) //Will use joinChannelEX
     }
     
     func stopMultiCameraStreaming() {
@@ -85,9 +87,30 @@ class AgoraViewModel: NSObject, ObservableObject {
         leaveConnectionChannel(uid: backCameraUid)
         leaveConnectionChannel(uid: externalCameraUid)
         
+        // Remote remote streams
+        remoteUsersViewList.removeAll()
+        
     }
     
-    func joinConnectionChannel(uid: UInt, token: String?, trackID: UInt,  agoraMultiChannelDelegator: AgoraMultiDelegator, publishMicrophone: Bool) {
+    func joinMainChannel(uid: UInt, token: String?, trackID: UInt) {
+        // Setup media option to send custom video track and microphone track
+        let mediaOptions = AgoraRtcChannelMediaOptions()
+        mediaOptions.publishCameraTrack = false
+        mediaOptions.publishMicrophoneTrack = true // Publish microphone from this connection
+        mediaOptions.publishCustomVideoTrack = true
+        mediaOptions.customVideoTrackId = Int(trackID)
+        mediaOptions.autoSubscribeVideo = false // do not subscribe by default, on didJoinedOfUid, call muteRemoteVideoStream(remote_uid, false) to subscribe
+        mediaOptions.autoSubscribeAudio = false // do not subscribe by default, on didJoinedOfUid, call muteRemoteAudioStream(remote_uid, false) to subscribe
+        mediaOptions.clientRoleType = .broadcaster
+        
+        // Set video encoding resolution
+        agoraKit.setVideoEncoderConfiguration(AgoraVideoEncoderConfiguration(size: resolutionSize, frameRate: .fps30, bitrate: AgoraVideoBitrateStandard, orientationMode: .adaptative, mirrorMode: .auto))
+        
+        // Join channel
+        agoraKit.joinChannel(byToken: token, channelId: agoraChannel, uid: frontCameraUid, mediaOptions: mediaOptions)
+    }
+//    
+    func joinConnectionChannel(uid: UInt, token: String?, trackID: UInt,  agoraMultiChannelDelegator: AgoraMultiDelegator) {
         // Create connection
         let connection = AgoraRtcConnection()
         connection.channelId = agoraChannel
@@ -100,7 +123,7 @@ class AgoraViewModel: NSObject, ObservableObject {
         // Setup media option to send custom video track and microphone track
         let mediaOptions = AgoraRtcChannelMediaOptions()
         mediaOptions.publishCameraTrack = false
-        mediaOptions.publishMicrophoneTrack = publishMicrophone // Publish microphone from this connection
+        mediaOptions.publishMicrophoneTrack = false
         mediaOptions.publishCustomVideoTrack = true
         mediaOptions.customVideoTrackId = Int(trackID)
         mediaOptions.autoSubscribeVideo = false // Autosub false to ensure you don't sub your own streams (aka cost)
@@ -115,45 +138,82 @@ class AgoraViewModel: NSObject, ObservableObject {
     }
     
     func leaveConnectionChannel(uid: UInt) {
-        let connection = AgoraRtcConnection()
-        connection.channelId = agoraChannel
-        connection.localUid = uid
-        
-        agoraKit.leaveChannelEx(connection)
-
+        if uid == frontCameraUid {
+            agoraKit.leaveChannel()
+        }else {
+            let connection = AgoraRtcConnection()
+            connection.channelId = agoraChannel
+            connection.localUid = uid
+            
+            agoraKit.leaveChannelEx(connection)
+        }
     }
+    
 }
 
 //// MARK: Main Agora callbacks
 extension AgoraViewModel: AgoraRtcEngineDelegate {
     // When local user joined
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int) {
-    }
-    
-    // Local user leaves
-    func rtcEngine(_ engine: AgoraRtcEngineKit, didLeaveChannelWith stats: AgoraChannelStats) {
-    }
-    
-}
-
-extension AgoraViewModel: AgoraMultiChannelDelegate {
-    func rtcEngine(_ engine: AgoraRtcEngineKit, connectionId: AgoraRtcConnection, didOccurWarning warningCode: AgoraWarningCode) {
-        
-    }
-    
-    func rtcEngine(_ engine: AgoraRtcEngineKit, connectionId: AgoraRtcConnection, didOccurError errorCode: AgoraErrorCode) {
-    
-    }
-    
-    func rtcEngine(_ engine: AgoraRtcEngineKit, connectionId: AgoraRtcConnection, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int) {
         print("Bac's didJoinChannel with uid \(uid)")
         if !isJoined {
             isJoined = true
         }
     }
     
+    // Local user leaves
+    func rtcEngine(_ engine: AgoraRtcEngineKit, didLeaveChannelWith stats: AgoraChannelStats) {
+    }
+    
+    func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinedOfUid uid: UInt, elapsed: Int) {
+        print("Bac's remote didJoinedOfUid with uid \(uid)")
+
+        // Do not render your own camera streams as REMOTE streams to avoid extra costs
+        if uid == backCameraUid || uid == externalCameraUid {
+            return
+        }
+        
+        // Unmute aka subscribe to remote UID streams
+        agoraKit.muteRemoteAudioStream(uid, mute: false)
+        agoraKit.muteRemoteVideoStream(uid, mute: false)
+        
+        // Render the remote user
+        if remoteUsersViewList.contains(where: {$0.0 == uid}) {
+            // Alraedy contains remote user, don't do anything
+            return
+        }else {
+            // Add remote user to the list
+            remoteUsersViewList.append((uid, RemoteUIViewRepresent())) // Append view to list
+            
+            // Render the view
+            let videoCanvas = AgoraRtcVideoCanvas()
+            videoCanvas.uid = uid
+            videoCanvas.view = remoteUsersViewList.first(where: {$0.0 == uid})?.1.containerPreview
+            videoCanvas.renderMode = .hidden
+            
+            agoraKit.setupRemoteVideo(videoCanvas)
+        }
+    }
+    
+    func rtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraUserOfflineReason) {
+    
+    }
+}
+
+extension AgoraViewModel: AgoraMultiChannelDelegate {
+    
+    // Callback for back and external camera UIDs
+    func rtcEngine(_ engine: AgoraRtcEngineKit, connectionId: AgoraRtcConnection, didOccurWarning warningCode: AgoraWarningCode) {
+    }
+    
+    func rtcEngine(_ engine: AgoraRtcEngineKit, connectionId: AgoraRtcConnection, didOccurError errorCode: AgoraErrorCode) {
+    }
+    
+    func rtcEngine(_ engine: AgoraRtcEngineKit, connectionId: AgoraRtcConnection, didJoinChannel channel: String, withUid uid: UInt, elapsed: Int) {
+
+    }
+    
     func rtcEngine(_ engine: AgoraRtcEngineKit, connectionId: AgoraRtcConnection, didJoinedOfUid uid: UInt, elapsed: Int) {
-        print("Bac's remote user joined with uid \(uid) ")
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, connectionId: AgoraRtcConnection, didOfflineOfUid uid: UInt, reason: AgoraUserOfflineReason) {

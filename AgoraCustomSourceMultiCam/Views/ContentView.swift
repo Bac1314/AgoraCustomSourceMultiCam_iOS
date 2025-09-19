@@ -41,21 +41,32 @@ struct ContentView: View {
                     .onTapGesture {
                         agoraVM.startMultiCameraStreaming()
                     }
-
+                                
+                
             } else {
                 Text("Local Views")
                     .font(.headline)
                 
-                agoraVM.frontCameraUIView
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                agoraVM.backCameraUIView
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                agoraVM.externalCameraUIView
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                HStack {
+                    agoraVM.frontCameraUIView
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    agoraVM.backCameraUIView
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    agoraVM.externalCameraUIView
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    
+                    
+                }
+      
+                Text("Remote Views")
+                    .font(.headline)
                 
-//                agoraVM.testingUIView
-//                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-
+                HStack {
+                    ForEach(agoraVM.remoteUsersViewList, id: \.0) { (uid, remoteView) in
+                        remoteView
+                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    }
+                }
                 
                 Text("Stop Streaming")
                     .font(.headline)

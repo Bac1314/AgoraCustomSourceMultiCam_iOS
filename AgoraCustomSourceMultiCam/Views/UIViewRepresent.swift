@@ -8,8 +8,24 @@ import Foundation
 import SwiftUI
 import AVFoundation
 
+struct RemoteUIViewRepresent : UIViewRepresentable {
+    let containerPreview = UIView() // Agora sdk render
+     
+    func makeUIView(context: Context) -> UIView {
+        containerPreview.backgroundColor = .darkGray
+        containerPreview.layer.cornerRadius = 16
+        return containerPreview
+    }
+    
+    func updateUIView(_ uiView: UIView, context: Context) {
+
+    }
+
+}
+
+
 struct LocalUIViewRepresent : UIViewRepresentable {
-    let containerPreview = LocalVideoPreview()
+    let containerPreview = LocalVideoPreview() // self render
     
     func makeUIView(context: Context) -> UIView {
         containerPreview.backgroundColor = .darkGray
