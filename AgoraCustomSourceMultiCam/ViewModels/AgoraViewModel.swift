@@ -163,6 +163,7 @@ extension AgoraViewModel: AgoraRtcEngineDelegate {
     
     // Local user leaves
     func rtcEngine(_ engine: AgoraRtcEngineKit, didLeaveChannelWith stats: AgoraChannelStats) {
+        isJoined = false
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didJoinedOfUid uid: UInt, elapsed: Int) {
@@ -179,7 +180,7 @@ extension AgoraViewModel: AgoraRtcEngineDelegate {
         
         // Render the remote user
         if remoteUsersViewList.contains(where: {$0.0 == uid}) {
-            // Alraedy contains remote user, don't do anything
+            // Already contains remote user, don't do anything
             return
         }else {
             // Add remote user to the list
@@ -190,13 +191,22 @@ extension AgoraViewModel: AgoraRtcEngineDelegate {
             videoCanvas.uid = uid
             videoCanvas.view = remoteUsersViewList.first(where: {$0.0 == uid})?.1.containerPreview
             videoCanvas.renderMode = .hidden
-            
             agoraKit.setupRemoteVideo(videoCanvas)
         }
     }
     
     func rtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: AgoraUserOfflineReason) {
-    
+        if let remoteUserIndex = remoteUsersViewList.firstIndex(where: {$0.0 == uid}) {
+            // Unbind remote view
+            let videoCanvas = AgoraRtcVideoCanvas()
+            videoCanvas.uid = uid
+            videoCanvas.view = nil
+            videoCanvas.renderMode = .hidden
+            agoraKit.setupRemoteVideo(videoCanvas)
+            
+            // Remove remote user from remoteUsersViewList
+            remoteUsersViewList.remove(at: remoteUserIndex)
+        }
     }
 }
 
